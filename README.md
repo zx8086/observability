@@ -1,8 +1,6 @@
-# monitoring
+# Monitoring
 
 Monitoring platform using ELK for End-to-End Ecosystem monitoring Applications, Services, Operationg Sysems and Hardware.
-
-
 
 Components :-
 
