@@ -1,0 +1,7 @@
+- name: OSx | Check if Beats package was installed previously
+    debug:
+      msg: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address']}}"
+
+- name: OSx | Check if Beats package was installed previously
+    debug:
+      msg: "{{ hostvars[inventory_hostname]['ansible_architecture']['address']}}"

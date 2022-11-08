@@ -1,0 +1,85 @@
+---
+# - name: Classify hosts depending on their ansible_os_family
+#   group_by:
+#     key: {{ansible_facts['distribution']}}
+#   register: is_distribution
+
+
+# {{ hostvars['ansible_facts']['os_family'] }}
+# {{ hostvars['test.example.com']['ansible_facts']['distribution'] }}
+
+# - name: Test Variables from ansible_facts
+#   debug: 
+#     var: "is_distribution"
+
+#     - hosts: os_MacOSx
+#       gather_facts: false
+# tasks:
+#     - name: "Leaving a Mark"
+#       command: touch /tmp/ansible_was_here_mac_osx
+#       register: tuned_adm
+#       changed_when: false
+
+
+# - name: Print all available facts
+#   ansible.builtin.debug:
+#     var: ansible_facts
+
+    # add_field => { "beat.hostname" => "{{ hostvars[item.1].inventory_hostname_short  }}" }
+
+    #     {% elif item.1 in groups['Spares'] %}
+    #       user => "{% set list1 = hostvars[item[1]].inventory_hostname.split('-') %}{{ list1[0] }}-{{ list1[1] }}-SP-{{ list1[3] }}"
+    #       password => "{% set list1 = hostvars[item[1]].inventory_hostname.split('-') %}sync2{{ list1[1] }}SP{{ list1[3][1:2] }}"
+    #     {% else %}
+
+
+  # - name: Set couchbase_ip when undefined
+  #   set_fact: couchbase_ip="{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address']}}"
+  #   when: couchbase_ip is undefined
+
+
+# - debug:
+#     msg: "{{ ansible_default_ipv4.address }}"
+
+
+# - debug:
+#     msg: 
+#       - " Data type of 'ansible_architecture'  is {{ ansible_architecture | type_debug }} "
+#       - " Data type of 'ansible_apparmor' is {{ ansible_apparmor | type_debug }} "
+#       - " Data type of 'ansible_all_ipv4_addresses' is {{ ansible_all_ipv4_addresses | type_debug }} "
+
+    # Simply printing the value of fact which is Ansible UnSafe Text type
+- debug:
+    msg: "{{ ansible_architecture }}"
+
+- debug:
+    msg: "{{ ansible_os_family }}"
+
+#     # Accessing an element of dictionary
+# - debug:
+#     msg: "{{ansible_apparmor.status}}"
+
+#     # Accessing the list
+# - debug:
+#     msg: "{{ansible_all_ipv4_addresses}}"
+
+#     # Accessing the Second Element of the list
+# - debug:
+#     msg: "{{ansible_all_ipv4_addresses[1]}}"
+
+
+# # Print the Dictionary
+# - debug:
+#     msg: "{{ansible_mounts}}"
+
+#     # Parsing through Variable Dictionary
+# - debug:
+#     msg: "Mount Point {{item.mount}} is at {{item.block_used/item.block_total*100}} percent "
+#     loop: "{{ansible_mounts}}"
+
+#     # Execute Host based task using variable
+# - name: Execute the command only mwiapp01 server
+#   become: yes
+#   become_user: root 
+#   shell: "uname -a"
+#   # when: "{{ ansible_hostname == 'mwiapp01'}}"

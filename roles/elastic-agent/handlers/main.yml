@@ -1,0 +1,21 @@
+---
+# handlers file for beats
+- ansible.builtin.set_fact: beats_package="elastic-agent"
+  when: beats_package is undefined
+
+- name: Restart Beats LaunchDaemon
+  shell: launchctl load "{{beats_launchdaemon}}/co.elastic.{{ beats_package }}.plist"
+  register: restarted
+  become: true
+  become_user: root
+  listen: "restart beats-agent service"
+  # when: is_present.stat.exists == True
+
+- name: Reload Elastic-Agent Service 
+  ansible.builtin.service:
+    name: elastic-agent
+    state: restarted
+    enabled: yes
+  become: true
+  become_user: root
+  listen: "restart elastic-agent service"

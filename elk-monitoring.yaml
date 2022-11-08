@@ -1,4 +1,4 @@
-- name:  ELK Monitoring 
+- name:  ELK Observability 
   hosts: all
   serial: 25
   gather_facts: yes 
