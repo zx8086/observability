@@ -1,0 +1,16 @@
+- name:  ELK Monitoring 
+  hosts: all
+  serial: 25
+  gather_facts: yes 
+  strategy: free
+  # become_user: root
+  roles:
+    - { role: fleetapi, tags: fleetapi}
+    - { role: beats, tags: beats}
+    # - { role: elastic-agent, tags: elastic-agent}
+    - { role: auditbeat,  tags: auditbeat}
+    - { role: filebeat, tags: filebeat}
+    - { role: heartbeat,  tags: heartbeat}
+    - { role: metricbeat, tags: metricbeat}
+    - { role: packetbeat, tags: packetbeat  }
+    # - { role: winlogbeat, tags: winlogbeat  }

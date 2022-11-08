@@ -1,0 +1,11 @@
+- type: log
+  paths:
+    - '/Users/Simon/Library/Logs/Homebrew/*/*'
+  fields:
+    app_id: Homebrew
+    event.dataset: homebrew.log
+  fields_under_root: true
+  ignore_older: 24h
+  enabled: true
+  exclude_files: ['\.gz$']
+  close_renamed: true

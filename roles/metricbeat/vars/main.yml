@@ -1,0 +1,21 @@
+beats_package: metricbeat
+
+has_monitors: false
+has_inputs: false
+has_modules: true
+
+modules:
+  - elasticsearch-xpack
+  - elasticsearch
+  - kibana-xpack
+  - kibana
+  - system
+#  - docker
+
+## Defaults
+inputs: 
+  - default
+  - debug 
+monitors: 
+  - default
+  - debug

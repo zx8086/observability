@@ -1,0 +1,201 @@
+---
+##### Auditbeat Install
+- name: "{{ beats_package }} | Check For Prior Downloads"
+  ansible.builtin.stat:
+    path: "{{root_path_downloads}}/{{ beats_package }}-{{ beats_version }}-{{beats_file_architecture}}.{{beats_file_suffix}}"
+  register: is_downloaded
+
+# cache in this instance to reduce bandwidth
+- name: "{{ beats_package }} | Downloads and Extract Beats"
+  ansible.builtin.unarchive:
+    src: "{{ beats_url }}/{{ beats_package }}/{{ beats_package }}-{{ beats_version }}-linux-arm64.tar.gz"
+    dest: "/home/pi/Documents"
+    remote_src: yes
+  # when: ansible_os_family =='Debian'
+  when: ansible_facts['os_family'] == "Debian"
+
+- name: "{{ beats_package }} | Download Files"
+  ansible.builtin.get_url:
+    timeout: 240
+    url: "{{ beats_url }}/{{ beats_package }}/{{ beats_package }}-{{ beats_version }}-{{beats_file_architecture}}.{{beats_file_suffix}}"
+    dest: "{{root_path_downloads}}"
+  when: is_downloaded.stat.exists == False
+
+###
+- name: Print all available facts
+  ansible.builtin.debug:
+    var: is_downloaded.stat.exists
+
+- name: "{{ beats_package }} | Extract Downloaded File"
+  ansible.builtin.command: tar xzvf "{{root_path_downloads}}/{{ beats_package }}-{{ beats_version }}-{{beats_file_architecture}}.{{beats_file_suffix}}"
+  args:
+    chdir: "{{root_path_documents}}"
+    warn: false 
+
+- name: "{{ beats_package }} | Check Existing Installation"
+  ansible.builtin.stat:
+    path: "{{root_path_documents}}/{{ beats_package }}"
+  register: is_installed
+
+###
+- name: Print all available facts
+  ansible.builtin.debug:
+    var: is_installed.stat.exists
+
+### Maybe a block for the following two takss based on is_installed
+- name: "{{ beats_package }} | Remove Existing Installation "
+  block:
+    - name: "{{ beats_package }} | Remove Existing Installation"
+      ansible.builtin.file:
+        path: "{{root_path_documents}}/{{ beats_package }}"
+        state: absent
+  # when: is_installed.stat.exists == True
+  become: true
+  become_user: root
+  ignore_errors: yes
+
+- name: "{{ beats_package }} | Rename Extracted Installation Folder"
+  command: mv {{root_path_documents}}/{{ beats_package }}-{{ beats_version }}-{{beats_file_architecture}} {{root_path_documents}}/{{ beats_package }}
+
+- name: "{{ beats_package }} | Remove Temp Installation Folder"
+  ansible.builtin.file:
+    path: "{{root_path_documents}}/{{ beats_package }}-{{ beats_version }}-{{beats_file_architecture}}"
+    state: absent
+
+- name: "{{ beats_package }} | Stop LaunchDaemon Prior For Existing Installation"
+  ansible.builtin.shell: launchctl unload "{{beats_launchdaemon}}/co.elastic.{{ beats_package }}.plist"
+  notify: "start auditbeat service"
+  become: true
+  become_user: root
+  ignore_errors: yes
+
+## Configuration Block
+- name: "{{ beats_package }} | Copy {{ beats_package }}.yml Configuration"
+  ansible.builtin.template:
+    src: roles/{{ beats_package }}/templates/{{ beats_package }}.yml.j2
+    dest: "{{root_path_documents}}/{{ beats_package }}/{{ beats_package }}.yml"
+    owner: root
+    group: staff
+    mode: go=-rwx
+  become: true
+  # become_user: root
+  tags:
+    - beat_config
+
+- name: "{{ beats_package }} | Remove Initial {{ beats_package }} 'modules.d' Directory"
+  ansible.builtin.file:
+    path: "{{root_path_documents}}/{{ beats_package }}/modules.d"
+    state: absent
+  become: true
+  # become_user: root
+  ignore_errors: yes
+  tags:
+    - beat_config
+
+- name: "{{ beats_package }} | Create {{ beats_package }} 'modules.d' Directory"
+  ansible.builtin.file:
+    path: "{{root_path_documents}}/{{ beats_package }}/modules.d"
+    state: directory
+    owner: root
+    group: staff
+    mode: go=-rwx
+  become: true
+  # become_user: root
+  ignore_errors: yes
+  tags:
+    - beat_config
+
+# Add Conditionalfor OS Family      
+- name: "{{ beats_package }} | Copy {{ beats_package }} 'modules.d' Configurations"
+  ansible.builtin.template:
+    src: "roles/{{ beats_package }}/templates/modules.d/{{ansible_os_family}}.yml.j2"
+    dest: "{{root_path_documents}}/{{ beats_package }}/modules.d/{{ansible_os_family}}.yml"
+    owner: root
+    group: staff
+    mode: go=-rwx
+  become: true
+  # become_user: root
+  ignore_errors: yes
+  # loop:
+  #   - docker
+  #   - elasticsearch-xpack
+  #   - elasticsearch
+  #   - kibana-xpack
+  #   - kibana
+  #   - system
+
+# - name: "{{ beats_package }} | Enabling {{ beats_package }} Modules" 
+#   ansible.builtin.shell:
+#     cmd: "./{{ beats_package }} modules enable {{ item }}"
+#     chdir: "{{root_path_documents}}/{{ beats_package }}"
+#   loop:
+#     - docker
+#     - elasticsearch-xpack
+#     - elasticsearch
+#     - kibana-xpack
+#     - kibana
+#     - system
+#   become: true
+#   become_user: root
+#   tags:
+#     - beat_config
+#   ignore_errors: yes
+
+- name: "{{ beats_package }} | Install {{ beats_package }} LaunchDaemon" 
+  ansible.builtin.template:
+    src: roles/{{ beats_package }}/templates/co.elastic.{{ beats_package }}.plist.j2
+    dest: "{{beats_launchdaemon}}/co.elastic.{{ beats_package }}.plist"
+  become: true
+  become_user: root
+  notify: "start auditbeat service"
+#   tags:
+#       - beat_config_reload
+
+# - name: Attempt and graceful roll back demo
+#   block:
+#     - name: Print a message
+#       ansible.builtin.debug:
+#         msg: 'I execute normally'
+
+#     - name: Force a failure
+#       ansible.builtin.command: /bin/false
+
+#     - name: Never print this
+#       ansible.builtin.debug:
+#         msg: 'I never execute, due to the above task failing, :-('
+#   rescue:
+#     - name: Print when errors
+#       ansible.builtin.debug:
+#         msg: 'I caught an error'
+
+#     - name: Force a failure in middle of recovery! >:-)
+#       ansible.builtin.command: /bin/false
+
+#     - name: Never print this
+#       ansible.builtin.debug:
+#         msg: 'I also never execute :-('
+#   always:
+#     - name: Always do this
+#       ansible.builtin.debug:
+#         msg: "This always executes"
+
+ # tasks:
+ #   - name: Attempt and graceful roll back demo
+ #     block:
+ #       - name: Print a message
+ #         ansible.builtin.debug:
+ #           msg: 'I execute normally'
+ #         changed_when: yes
+ #         notify: run me even after an error
+
+ #       - name: Force a failure
+ #         ansible.builtin.command: /bin/false
+ #     rescue:
+ #       - name: Make sure all handlers run
+ #         meta: flush_handlers
+ # handlers:
+ #    - name: Run me even after an error
+ #      ansible.builtin.debug:
+ #        msg: 'This handler runs even on error'
+
+ #  

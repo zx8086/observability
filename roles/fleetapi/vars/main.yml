@@ -1,0 +1,26 @@
+---
+# vars file for fleetapi
+
+fleet_base_url: "http://192.168.0.3:5601/api/fleet"
+httpUsername: "elastic"
+httpPassword: "elkpassword"
+agentId: "89dd36f5-55bd-44dd-9878-5ec85b48e9db"
+keyId: "7c0f25e8-003b-4e10-9832-29687f2a60b3"
+agentPolicyId: "4a6543c0-1d37-11ec-86ae-13454012fdaa"
+outputId: "62e3f940-165d-11ec-a72b-7907971cb1d7"
+packagePolicyId: "9ae5dc9c-cc62-4d6c-a877-62358172affe"
+
+# http://192.168.0.3:5601/api/fleet/3091ec60-3b5d-43f8-b040-95905f0b967e/unenroll
+# ansible-playbook release.yml --extra-vars "version=1.23.45 other_variable=foo"
+# ansible-playbook release.yml --extra-vars '{"version":"1.23.45","other_variable":"foo"}'
+# ansible-playbook arcade.yml --extra-vars '{"pacman":"mrs","ghosts":["inky","pinky","clyde","sue"]}'
+
+# "policy_id": "4a6543c0-1d37-11ec-86ae-13454012fdaa",
+# "output_id": "62e3f940-165d-11ec-a72b-7907971cb1d7",
+# "id": "0a312c43-0cec-4e0d-ae4b-cd655548e02c",
+
+# https://kibana.siobytes.com/app/fleet/policies/4a6543c0-1d37-11ec-86ae-13454012fdaa/edit-integration/
+
+# https://kibana.siobytes.com/app/fleet/policies/.  
+# policies 4a6543c0-1d37-11ec-86ae-13454012fdaa  
+# package id 0a312c43-0cec-4e0d-ae4b-cd655548e02c

@@ -1,0 +1,9 @@
+---
+# tasks file for packetbeat
+- name: Install packetbeat
+  import_tasks: install.yaml
+  tags: install-packetbeat
+
+- name: Debug packetbeat
+  import_tasks: debug.yaml
+  tags: packetbeat-debug

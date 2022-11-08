@@ -1,0 +1,7 @@
+---
+# handlers file for beats
+- name: Start { beats_package }} LaunchDaemon
+  shell:  launchctl load "{{beats_launchdaemon}}/co.elastic.{{ beats_package }}.plist"
+  become: true
+  become_user: root
+  listen: "start metricbeat service"

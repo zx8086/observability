@@ -1,0 +1,14 @@
+- name: Installing Beats for co.elastic monitoring 
+  hosts: all
+  serial: 25
+  strategy: free
+  become_user: Simon
+  roles:
+    - { role: beats }
+    - { role: elastic-agent, tags: elastic-agent }
+    # - { role: auditbeat,  tags: auditbeat   }
+    # - { role: filebeat,   tags: filebeat    }
+    # - { role: heartbeat,  tags: heartbeat   }
+    # - { role: metricbeat, tags: metricbeat  }
+    # - { role: packetbeat, tags: packetbeat  }
+    # - { role: winlogbeat, tags: winlogbeat  }

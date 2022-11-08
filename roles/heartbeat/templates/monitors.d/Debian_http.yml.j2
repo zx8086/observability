@@ -1,0 +1,157 @@
+# These files contain a list of monitor configurations identical
+# to the heartbeat.monitors section in heartbeat.yml
+# The .example extension on this file must be removed for it to
+# be loaded.
+ 
+- type: http
+  # ID used to uniquely identify this monitor in elasticsearch even if the config changes
+  id: Internet Service - Google
+  # Human readable display name for this service in Uptime UI and elsewhere
+  name: Internet Service - Google
+  # List or urls to query
+  urls: ["http://www.google.com"]
+  # Configure task schedule
+  schedule: '@every 10s'
+  # Total test connection and data exchange timeout
+  timeout: 16s
+  # Name of corresponding APM service, if Elastic APM is in use for the monitored service.
+  #service.name: my-apm-service-name
+
+- type: http
+  # ID used to uniquely identify this monitor in elasticsearch even if the config changes
+  id: Portainer Container Management Service
+  # Human readable display name for this service in Uptime UI and elsewhere
+  name: Portainer Container Management Service
+  # List or urls to query
+  urls: ["https://portainer.siobytes.com"]
+  # Configure task schedule
+  schedule: '@every 10m'
+  # Total test connection and data exchange timeout
+  timeout: 16s
+  # Name of corresponding APM service, if Elastic APM is in use for the monitored service.
+
+- type: http
+  # ID used to uniquely identify this monitor in elasticsearch even if the config changes
+  id: Rocket.Chat Server Service
+  # Human readable display name for this service in Uptime UI and elsewhere
+  name: Rocket.Chat Server Service
+  # List or urls to query
+  urls: ["https://chat.siobytes.com"]
+  # Configure task schedule
+  schedule: '@every 5m'
+  # Total test connection and data exchange timeout
+  timeout: 16s
+  # Name of corresponding APM service, if Elastic APM is in use for the monitored service.
+  
+- type: http
+  # ID used to uniquely identify this monitor in elasticsearch even if the config changes
+  id: Elasticsearch Service
+  # Human readable display name for this service in Uptime UI and elsewhere
+  name: Elasticsearch Service
+  # List or urls to query
+  urls: ["https://elasticsearch.siobytes.com/_cluster/health"]
+  # Configure task schedule
+  schedule: '@every 10s'
+  # Total test connection and data exchange timeout
+  timeout: 16s
+  # Name of corresponding APM service, if Elastic APM is in use for the monitored service.
+  #service.name: my-apm-service-name
+  username: "{{elastic_username}}"
+  password: "{{elastic_password}}"
+
+  # Expected response settings
+  response.include_body: always
+  response.include_body_max_bytes: 3076 
+
+  check.response:
+    # Expected status code. If not configured or set to 0 any status code not
+    # being 404 is accepted.
+    status: [200]
+
+    # Required response headers.
+    #headers:
+
+    # Required response contents.
+    body:
+      - status
+
+- type: http
+  # ID used to uniquely identify this monitor in elasticsearch even if the config changes
+  id: Kibana Service
+  # Human readable display name for this service in Uptime UI and elsewhere
+  name: Kibana Service
+  # List or urls to query
+  urls: ["https://kibana.siobytes.com//api/features"]
+  # Configure task schedule
+  schedule: '@every 30s'
+  # Total test connection and data exchange timeout
+  timeout: 16s
+  # Name of corresponding APM service, if Elastic APM is in use for the monitored service.
+  #service.name: my-apm-service-name
+  username: "{{elastic_username}}"
+  password: "{{elastic_password}}"
+
+  # Expected response settings
+  response.include_body: always
+  response.include_body_max_bytes: 3076
+
+  check.response:
+    # Expected status code. If not configured or set to 0 any status code not
+    # being 404 is accepted.
+    status: [200]
+
+    # Required response headers.
+    #headers:
+
+    # Required response contents.
+    body:
+      - status
+
+- type: http
+  # ID used to uniquely identify this monitor in elasticsearch even if the config changes
+  id: Code Geass - Home Assistant Automation Service
+  # Human readable display name for this service in Uptime UI and elsewhere
+  name: Home Assistant Automation Service
+  # List or urls to query
+  urls: ["https://home.siobytes.com"]
+  # Configure task schedule
+  schedule: '@every 5m'
+  # Total test connection and data exchange timeout
+  timeout: 15s
+  # Name of corresponding APM service, if Elastic APM is in use for the monitored service.
+  #service.name: my-apm-service-name
+
+- type: http
+  # ID used to uniquely identify this monitor in elasticsearch even if the config changes
+  id: Plex Media Server Service
+  # Human readable display name for this service in Uptime UI and elsewhere
+  name: Plex Media Server Service
+  # List or urls to query
+  urls: ["https://plex.siobytes.com/"]
+  # Configure task schedule
+  schedule: '@every 5m'
+  # Total test connection and data exchange timeout
+  timeout: 16s
+  # Name of corresponding APM service, if Elastic APM is in use for the monitored service.
+  #service.name: my-apm-service-name
+  check.request:
+     method: GET
+     headers:
+       'X-Plex-Token': "{{plex_token}}"
+  # Expected response settings
+  response.include_body: always
+  response.include_body_max_bytes: 3076
+
+- type: http
+  # ID used to uniquely identify this monitor in elasticsearch even if the config changes
+  id: Pi-Hole Ad Blocker Service
+  # Human readable display name for this service in Uptime UI and elsewhere
+  name: Pi-Hole Ad Blocker Service
+  # List or urls to query
+  urls: ["https://pihole.siobytes.com"]
+  # Configure task schedule
+  schedule: '@every 1m'
+  # Total test connection and data exchange timeout
+  timeout: 16s
+  # Name of corresponding APM service, if Elastic APM is in use for the monitored service.
+  #service.name: my-apm-service-name

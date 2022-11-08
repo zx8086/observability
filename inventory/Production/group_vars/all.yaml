@@ -1,0 +1,107 @@
+# Production variables for entire ELK Project
+env: Production
+digital_domain: "Digital Showroom"
+
+### Beats
+beats_version: 7.15.1
+beats_url: "https://artifacts.elastic.co/downloads/beats"
+beats_daemon_x86_64: "/Library/LaunchDaemons"
+# beats_package: "elastic-agent"
+beats_daamons: "co.elastic"
+
+auditbeat_max_start_delay: 10s
+metricbeat_max_start_delay: 10s
+
+reload_enabled: true
+# How often to check for changes
+reload_period: 10s
+
+### Elastic-Agent
+elastic-agent-enroll-token: "SFljcldYa0JfbWU2MUoxX0k0WXE6QzJqNGtXZTdSZ21xMVZIbTdYbGswdw=="
+
+### ELK
+elasticsearch_host: "192.168.0.3"
+elasticsearch_url: "https://elasticsearch.siobytes.com:443"
+elasticsearch_protocol: https
+elasticsearch_compression_level: 9
+kibana_host: 192.168.0.3
+kibana_url: "https://kibana.siobytes.com:443"
+kibana_protocol: https
+elastic_username: "elastic"
+elastic_password: "elkpassword"
+apm_host: 192.168.0.3
+apm_url: "https://apm.siobytes.com:443"
+logstash_hosts:
+  - 192.168.0.7
+  - 192.168.0.8
+logstash_url: "https://logstash.siobytes.com:443"
+loadbalance: true
+logstash_compression_level: 9
+
+### SSL
+ssl_enabled: true
+ssl_certificate_authorities: "/etc/ssl/certs/DigiCert_Global_Root_CA.pem"
+ssl_certificate: "/etc/ssl/certs/chain_bundle_siobytes.crt"
+ssl_key: "/etc/ssl/certs/myserver.key"
+
+# API Keys 
+#Elasticsearch
+# Base_64 => T0FTQUpIb0J0bWxCRUl1OW85eXU6ZUZtWVNxLVhSRC16YUNxZzhiWF9RZw==
+# JSON => {"id":"OASAJHoBtmlBEIu9o9yu","name":"elasticsearch","api_key":"eFmYSq-XRD-zaCqg8bX_Qg"}
+# Logstash => OASAJHoBtmlBEIu9o9yu:eFmYSq-XRD-zaCqg8bX_Qg
+# Beats => OASAJHoBtmlBEIu9o9yu:eFmYSq-XRD-zaCqg8bX_Qg
+
+output_logstash_enabled: true
+output_elasticsearch_enabled: false
+
+## Disk Queue
+queue_disk_retry_interval: 5s
+
+## Dashbaord & Kibana Setup
+setup_dashboards_enabled: false
+
+### Index Templates
+setup_template_enabled: false
+setup_template_overwrite: false
+setup_template_type: index
+index_number_of_shards: 1
+index_number_of_replicas: 0
+compression_level: 9
+index_codec: best_compression
+
+### Logging
+logging_metrics_enabled: false
+logging_metrics_period: 1m
+logging_to_files: true
+logging_level: "info" 
+logging_selectors: '"*"'
+logging_keepfiles: 7
+
+### 
+instrumentation_enabled: true
+secret_token: "xOHnlPUSO66rtbc7IIA3R9566LyWdr80"
+
+
+## Defaults
+monitors: 
+  - default
+  - debug 
+inputs: 
+  - default
+  - debug 
+modules: 
+  - default
+  - debug 
+
+### Others
+plex_token: "N9suQF_PapRLsVBV6ZxC"
+
+#filebeat
+# - module: file_integrity
+#   paths:
+#   - /bin
+#   - /usr/bin
+#   - /usr/local/bin
+#   - /sbin
+#   - /usr/sbin
+#   - /usr/local/sbin

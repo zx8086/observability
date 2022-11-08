@@ -1,0 +1,27 @@
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>co.elastic.{{ beats_package }}</string>
+    <key>Program</key>
+    <string>{{root_path_documents}}/{{ beats_package }}/{{ beats_package }}</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>{{root_path_documents}}/{{ beats_package }}</string>
+        <string>-e</string>
+        <string>-c</string>
+        <string>{{root_path_documents}}/{{ beats_package }}/{{ beats_package }}.yml</string>
+        <string>-d</string>
+        <string>"publish"</string>
+        <string>-strict.perms=false</string>
+    </array>
+    <key>UserName</key>
+    <string>root</string>
+    <key>KeepAlive</key>
+    <false/>
+    <key>RunAtLoad</key>
+    <true/>
+</dict>
+</plist>

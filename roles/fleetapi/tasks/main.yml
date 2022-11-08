@@ -1,0 +1,5 @@
+---
+# tasks file for fleetapi
+- name: Install fleetapi
+  import_tasks: fleetapi.yml
+  tags: fleetapi

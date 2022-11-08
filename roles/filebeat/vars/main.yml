@@ -1,0 +1,24 @@
+---
+# vars file for filebeat
+beats_package: filebeat
+
+# output_logstash_enabled: true
+# output_elasticsearch_enabled: false
+
+has_monitors: false
+has_inputs: true
+has_modules: true
+
+modules:
+  - elasticsearch
+  - kibana
+  - system
+
+## Defaults
+inputs: 
+  - inputs1
+  - inputs2
+
+monitors: 
+  - default
+  - debug

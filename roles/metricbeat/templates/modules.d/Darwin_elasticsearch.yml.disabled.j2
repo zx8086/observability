@@ -1,0 +1,29 @@
+# Module: elasticsearch
+# Docs: https://www.elastic.co/guide/en/beats/metricbeat/7.x/metricbeat-module-elasticsearch.html
+
+metricbeat.modules:
+- module: elasticsearch
+  metricsets:
+    - node
+    - node_stats
+    - pending_tasks
+    - index
+    - index_recovery
+    - index_summary
+    - shard
+#    - ml_job
+#    - ccr
+#    - cluster_stats
+#    - enrich
+  period: 120s
+
+  hosts: "{{elasticsearch_url}}"
+  username: "{{elastic_username}}"
+  password: "{{elastic_password}}"
+
+  #ssl.certificate_authorities: ["/etc/pki/root/ca.pem"]
+
+  index_recovery.active_only: true
+  #xpack.enabled: false
+  #scope: node
+

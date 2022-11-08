@@ -1,0 +1,13 @@
+# Module: elasticsearch
+# Docs: https://www.elastic.co/guide/en/beats/metricbeat/7.x/metricbeat-module-elasticsearch.html
+
+- module: elasticsearch
+  #metricsets:
+    # - node
+  xpack.enabled: true
+  period: 60s
+
+  hosts: "{{elasticsearch_url}}"
+  username: "{{elastic_username}}"
+  password: "{{elastic_password}}"
+

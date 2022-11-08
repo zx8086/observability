@@ -1,0 +1,5 @@
+# https://artifacts.elastic.co/downloads/beats/elastic-agent/elastic-agent-7.12.1-darwin-x86_64.tar.gz
+
+beats_file_architecture: "darwin-x86_64"
+beats_file_suffix: "tar.gz"
+beats_launchdaemon: "/Library/LaunchDaemons"

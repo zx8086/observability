@@ -1,0 +1,4 @@
+---
+# vars file for auditbeat
+beats_package: "auditbeat"
+

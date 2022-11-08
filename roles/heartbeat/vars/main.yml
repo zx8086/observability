@@ -1,0 +1,17 @@
+beats_package: heartbeat
+
+has_monitors: true
+has_inputs: false
+has_modules: false
+
+monitors:
+  - "{{ansible_os_family}}_http"
+  - "{{ansible_os_family}}_tcp"
+
+inputs: 
+  - default
+  - debug 
+
+modules: 
+  - default
+  - debug 

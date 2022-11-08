@@ -1,2 +1,18 @@
 ---
 # tasks file for beats
+
+# - name: Download Beats packages
+#   import_tasks: roles/beats/tasks/download.yaml
+#   tags:
+#     - beats
+#     - download_beats
+
+- name: Installing Beats
+  import_tasks: install.yaml
+  tags:
+    - beats-agent-install
+
+- name: Installing Beats
+  import_tasks: group_hosts_by_os.yaml
+  tags:
+    - debug

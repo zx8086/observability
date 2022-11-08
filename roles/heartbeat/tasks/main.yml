@@ -1,0 +1,5 @@
+---
+# tasks file for heartbeat
+- name: Install Heartbeat 
+  import_tasks: install.yaml
+  tags: install-heartbeat

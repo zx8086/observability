@@ -1,0 +1,34 @@
+---
+# vars file for packetbeat
+beats_package: "packetbeat"
+
+http_ports:
+   - 80
+   - 3000
+   - 3001
+   - 3030
+   - 5000
+   - 8000
+   - 8002
+   - 8080
+   - 8123
+   - 8181
+   - 32400
+
+http_send_request: true
+http_send_response: true
+
+dns_include_authorities: true
+dns_include_additionals: true
+
+tls_ports:
+   - 443
+   - 993
+   - 995
+   - 5223
+   - 8443
+   - 8883
+   - 9243
+
+tls_send_certificates: true
+tls_include_raw_certificates: true

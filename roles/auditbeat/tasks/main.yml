@@ -1,0 +1,9 @@
+---
+# tasks file for auditbeat
+- name: Install Auditbeat
+  import_tasks: install.yaml
+  tags: install-auditbeat
+
+- name: Debug Auditbeat
+  import_tasks: debug.yaml
+  tags: auditbeat-debug

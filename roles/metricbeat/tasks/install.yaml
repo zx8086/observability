@@ -1,0 +1,207 @@
+---
+#Metricbeat install.yaml
+
+- name: "{{ beats_package }} | Check for existing downloaded zip file"
+  ansible.builtin.stat:
+    path: "{{root_path_downloads}}/{{ beats_package }}-{{ beats_version }}-{{beats_file_architecture}}.{{beats_file_suffix}}"
+  register: is_downloaded
+
+## This should be a block 
+- name: "{{ beats_package }} | Download and extract beats for Darwin Os"
+  block:
+    - name: "{{ beats_package }} | Download files from co.elastic"
+      ansible.builtin.get_url:
+        timeout: 240
+        url: "{{ beats_url }}/{{ beats_package }}/{{ beats_package }}-{{ beats_version }}-{{beats_file_architecture}}.{{beats_file_suffix}}"
+        dest: "{{root_path_downloads}}"
+      when: is_downloaded.stat.exists == False
+
+    - name: "{{ beats_package }} | Extract the downloaded zip file"
+      ansible.builtin.command: tar xzvf "{{root_path_downloads}}/{{ beats_package }}-{{ beats_version }}-{{beats_file_architecture}}.{{beats_file_suffix}}"
+      args:
+        chdir: "{{root_path_documents}}"
+        warn: false
+#   rescue:
+#
+#   always:
+#
+  when: ansible_os_family == "Darwin"
+### this is a block
+
+- name: "{{ beats_package }} | Download and extract beats for Debian Os"
+  ansible.builtin.unarchive:
+    src: "{{ beats_url }}/{{ beats_package }}/{{ beats_package }}-{{ beats_version }}-linux-arm64.tar.gz"
+    dest: "{{root_path_documents}}"
+    remote_src: yes
+  when: ansible_os_family == "Debian"
+
+- name: Debug ansible_os_family
+  debug:
+    var: ansible_os_family
+
+- name: "{{ beats_package }} | Check Existing Installation"
+  ansible.builtin.stat:
+    path: "{root_path_documents}}/{{ beats_package}}"
+  register: is_installed
+
+- name: "{{ beats_package }} | Clean existing installation"
+  block:
+    - name: "{{ beats_package }} | Remove existing installation"
+      ansible.builtin.file:
+        path: "{{root_path_documents}}/{{ beats_package }}"
+        state: absent
+
+    - name: "{{ beats_package }} | Rename extracted folder"
+      command: mv {{root_path_documents}}/{{ beats_package }}-{{ beats_version }}-{{beats_file_architecture}} {{root_path_documents}}/{{ beats_package }}
+
+    - name: "{{ beats_package }} | Remove temporary folder"
+      ansible.builtin.file:
+        path: "{{root_path_documents}}/{{ beats_package }}-{{ beats_version }}-{{beats_file_architecture}}"
+        state: absent
+
+    - name: "{{ beats_package }} | Stop LaunchDaemon Prior For Existing Installation"
+      ansible.builtin.shell: launchctl unload "{{beats_launchdaemon}}/co.elastic.{{ beats_package }}.plist"
+      notify: "start {{ beats_package }} service"
+#  rescue:
+#
+#  always:
+#
+  become: true
+  become_user: root
+  ignore_errors: yes
+  # when: is_installed.stat.exists == True
+
+### Configuration Block
+- name: "{{ beats_package }} | Copy {{ beats_package }}.yml Configuration"
+  ansible.builtin.template:
+    src: roles/{{ beats_package }}/templates/{{ beats_package }}.yml.j2
+    dest: "{{root_path_documents}}/{{ beats_package }}/{{ beats_package }}.yml"
+    owner: root
+    group: staff
+    mode: go=-rwx
+  become: true
+
+- name: "{{ beats_package }} | Copy {{ beats_package }} LaunchDaemon" 
+  ansible.builtin.template:
+    src: roles/{{ beats_package }}/templates/co.elastic.{{ beats_package }}.plist.j2
+    dest: "{{beats_launchdaemon}}/co.elastic.{{ beats_package }}.plist"
+  become: true
+  become_user: root
+  notify: "start {{ beats_package }} service"
+
+### Monitors Block
+- name: Install or Configure Monitors
+  block:
+    - name: "{{ beats_package }} | Remove Initial {{ beats_package }} 'monitors.d' Directory"
+      ansible.builtin.file:
+        path: "{{root_path_documents}}/{{ beats_package }}/monitors.d"
+        state: absent
+
+    - name: "{{ beats_package }} | Create {{ beats_package }} 'monitors.d' Directory"
+      ansible.builtin.file:
+        path: "{{root_path_documents}}/{{ beats_package }}/monitors.d"
+        state: directory
+        owner: root
+        group: staff
+        mode: go=-rwx
+
+    - name: "{{ beats_package }} | Copy {{ beats_package }} 'monitors.d' Configurations"
+      ansible.builtin.template:
+        src: "roles/{{ beats_package }}/templates/monitors.d/{{ansible_os_family}}_{{item}}.yml.j2"
+        dest: "{{root_path_documents}}/{{ beats_package }}/monitors.d/{{item}}.yml"
+        owner: root
+        group: staff
+        mode: go=-rwx
+      loop: "{{monitors}}"
+#  rescue:
+#
+#  always:
+#
+  become: true
+  become_user: root
+  ignore_errors: yes
+  when: has_monitors == True
+
+### Inputs Block
+- name: Install or Configure Inputs
+  block:
+    - name: "{{ beats_package }} | Remove Initial {{ beats_package }} 'inputs.d' Directory"
+      ansible.builtin.file:
+        path: "{{root_path_documents}}/{{ beats_package }}/inputs.d"
+        state: absent
+
+    - name: "{{ beats_package }} | Create {{ beats_package }} 'inputs.d' Directory"
+      ansible.builtin.file:
+        path: "{{root_path_documents}}/{{ beats_package }}/inputs.d"
+        state: directory
+        owner: root
+        group: staff
+        mode: go=-rwx
+
+    - name: "{{ beats_package }} | Copy {{ beats_package }} 'inputs.d' Configurations"
+      ansible.builtin.template:
+        src: "roles/{{ beats_package }}/templates/inputs.d/{{item}}.yml.j2"
+        dest: "{{root_path_documents}}/{{ beats_package }}/inputs.d/{{item}}.yml"
+        owner: root
+        group: staff
+        mode: go=-rwx
+      loop: "{{inputs}}"
+#  rescue:
+#
+#  always:
+#
+  become: true
+  become_user: root
+  ignore_errors: yes
+  when: has_inputs == True
+
+## Modules Block
+- name: Install or Configure Modules
+  block:
+    - name: "{{ beats_package }} | Remove Initial {{ beats_package }} 'modulues.d' Directory"
+      ansible.builtin.file:
+        path: "{{root_path_documents}}/{{ beats_package }}/modules.d"
+        state: absent
+
+    - name: "{{ beats_package }} | Create {{ beats_package }} 'modules.d' Directory"
+      ansible.builtin.file:
+        path: "{{root_path_documents}}/{{ beats_package }}/modules.d"
+        state: directory
+        owner: root
+        group: staff
+        mode: go=-rwx
+
+    - name: "{{ beats_package }} | Set Permissions for {{ beats_package }} 'module' Directory"
+      ansible.builtin.file:
+        path: "{{root_path_documents}}/{{ beats_package }}/module"
+        state: directory
+        owner: root
+        group: staff
+        mode: go=-rwx
+
+    - name: "{{ beats_package }} | Copy {{ beats_package }} 'modules.d' Configurations"
+      ansible.builtin.template:
+        src: "roles/{{ beats_package }}/templates/modules.d/{{ansible_os_family}}_{{item}}.yml.disabled.j2"
+        dest: "{{root_path_documents}}/{{ beats_package }}/modules.d/{{item}}.yml.disabled"
+        owner: root
+        group: staff
+        mode: go=-rwx
+        # remote_src: yes
+      loop: "{{modules}}"
+
+    - name: "{{ beats_package }} | Enabling {{ beats_package }} Modules"
+      ansible.builtin.shell:
+        cmd: "./{{ beats_package }} modules enable {{ item }}"
+        chdir: "/Users/Simon/Documents/{{ beats_package }}"
+      loop: "{{modules}}"
+#  rescue:
+#
+#  always:
+#
+  become: true
+  become_user: root
+  ignore_errors: yes
+  when: has_modules == True
+
+- debug:
+    msg: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address']}}"

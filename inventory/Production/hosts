@@ -1,0 +1,114 @@
+ansible_python_interpreter=/usr/bin/python3
+
+[pi_localhost]
+HariSeldon		ansible_ssh_host=127.0.0.1 ansible_connection=local ansible_user=pi
+
+[pi_dev]
+GaalDornick 	ansible_ssh_host=192.168.0.7 ansible_user=pi
+
+[pi_test]
+YohanLee 		ansible_ssh_host=192.168.0.8 ansible_user=pi
+
+[pi_k8s_cluster_master]
+HoberMallow 	ansible_ssh_host=192.168.0.90 ansible_user=pi
+
+[pi_k8s_cluster_node]
+SalvorHardin 	ansible_ssh_host=192.168.0.91 ansible_user=pi
+MullerHolk 		ansible_ssh_host=192.168.0.92 ansible_user=pi
+
+[mac_code_geass]
+CodeGeass		ansible_ssh_host=192.168.0.5 ansible_user=Simon
+
+[dell]
+IsaacAsimov 	ansible_ssh_host=192.168.0.3 ansible_user=pi
+
+[Amsterdam_Theaters]
+CodeGeass		ansible_ssh_host=192.168.0.5 ansible_user=Simon
+
+[Amsterdam_Workstations]
+192.168.0.90    ansible_user=pi
+192.168.0.91    ansible_user=pi
+
+[Dusseldorf_Theaters]
+192.168.0.7     ansible_user=pi
+
+[London_Spares]
+192.168.0.92    ansible_user=pi
+
+[all:children]
+Amsterdam_Theaters
+Amsterdam_Workstations
+Dusseldorf_Theaters
+London_Spares
+
+[pi_k8s_cluster:children]
+pi_k8s_cluster_master
+pi_k8s_cluster_node
+
+[pi_all:children]
+pi_dev
+pi_test
+pi_k8s_cluster
+# pi_localhost
+
+[pi_logstash:children]
+pi_dev
+pi_test
+
+## ansible_architecture
+[x86_64:children]
+Amsterdam_Theaters
+
+[aarch64:children]
+Dusseldorf_Theaters
+
+[arm7l:children]
+Amsterdam_Workstations
+London_Spares
+
+## ansible_os_family
+[Darwin:children]
+Amsterdam_Theaters
+
+[Debian:children]
+Amsterdam_Workstations
+Dusseldorf_Theaters
+London_Spares
+
+## Locations
+[Amsterdam:children]
+Amsterdam_Theaters
+Amsterdam_Workstations
+
+## Digital Roles
+# Theaters
+[Theaters:children]
+Amsterdam_Theaters
+Dusseldorf_Theaters
+
+[Theaters:vars]
+digital_role=Theater
+
+# Workstations
+[Workstations:children]
+Amsterdam_Workstations
+
+[Workstations:vars]
+digital_role=Workstation
+
+# Spares
+[Spares:children]
+London_Spares
+
+[Spares:vars]
+digital_role=Spare
+
+## ELK Servers
+
+[logstash]
+192.168.0.7 
+192.168.0.8
+
+
+#192.168.0.7:5044
+#192.168.0.8:5044

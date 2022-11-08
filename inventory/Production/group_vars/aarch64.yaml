@@ -1,0 +1,4 @@
+# https://artifacts.elastic.co/downloads/beats/elastic-agent/elastic-agent-7.12.1-linux-arm64.tar.gz
+
+beats_file_architecture: "linux-arm64"
+beats_file_suffix: "tar.gz"

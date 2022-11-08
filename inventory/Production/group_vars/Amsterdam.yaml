@@ -1,0 +1,14 @@
+location: Amsterdam
+timezone: "Europe/Amsterdam"
+
+cache_ttl: 5m
+geo_name: Amsterdam
+geo_location: 52.370216,4.895168
+geo_continent_name: Europe
+geo_country_iso_code: NL
+geo_region_name: Netherlands
+geo_region_iso_code: NL
+geo_city_name: Amsterdam
+
+
+

@@ -1,0 +1,71 @@
+---
+- hosts: pi_all
+  serial: 1
+  become: true
+  become_method: sudo
+  tasks:
+  - name: Upgrade kernel
+    command: /usr/bin/rpi-update
+    environment:
+      SKIP_WARNING: 1
+    register: rpiupdate
+    changed_when: '"A reboot is needed" in rpiupdate.stdout'
+    until: rpiupdate is succeeded
+    retries: 3
+    tags:
+      - kernel
+    notify: "reboot node"
+
+  - name: Run the equivalent of "apt-get update" as a separate step & only run "update_cache=yes" if the last one is more than 3600 seconds ago
+    apt:
+      update_cache: true
+      cache_valid_time: 3600
+    tags:
+      - apt
+
+  - name: Upgrade the OS (apt-get dist-upgrade)
+    apt:
+      upgrade: dist
+    register: aptupgrade
+    until: aptupgrade is succeeded
+    retries: 3
+    tags:
+      - apt
+
+  - name: Update all packages to their latest version
+    apt:
+      name: "*"
+      state: present
+    tags:
+      - apt
+
+  - name: Remove useless packages from the cache
+    apt:
+      autoclean: true
+    tags:
+      - apt
+
+  - name: Remove dependencies that are no longer required
+    apt:
+      autoremove: true
+    tags:
+      - apt
+
+  handlers:
+    - name: Reboot node
+      listen: "reboot node"
+      command: "shutdown -r"
+      changed_when: false
+      ignore_errors: true
+
+    - name: Wait 300 seconds, but only start checking after 60 seconds
+      listen: "reboot node"
+      wait_for_connection:
+        delay: 240
+        timeout: 6000
+
+    - name: Wait for port 22 to become open on the host, don't start checking for 120 seconds
+      listen: "reboot node"
+      wait_for:
+        port: 22
+        delay: 120
