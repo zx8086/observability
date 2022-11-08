@@ -7,7 +7,7 @@
   roles:
     - { role: fleetapi, tags: fleetapi}
     - { role: beats, tags: beats}
-    # - { role: elastic-agent, tags: elastic-agent}
+    - { role: elastic-agent, tags: elastic-agent}
     - { role: auditbeat,  tags: auditbeat}
     - { role: filebeat, tags: filebeat}
     - { role: heartbeat,  tags: heartbeat}
